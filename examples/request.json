@@ -1,0 +1,26 @@
+{
+  "api_version": "nce/v1",
+  "id": "e458872e-336c-48c5-92db-598692debe42",
+  "actor": {
+    "id": "agent-123",
+    "type": "agent",
+    "attributes": {}
+  },
+  "action": {
+    "type": "db.drop",
+    "params": {
+      "table": "users"
+    }
+  },
+  "context": {
+    "constitution_id": "company-core",
+    "constitution_version": "1.0.0",
+    "environment": {
+      "name": "production",
+      "timestamp": "2026-06-29T00:00:00Z"
+    },
+    "correlation_id": "d23f33cc-8968-4f81-80bb-69be3464ad5a",
+    "scopes": ["global"]
+  },
+  "submitted_at": "2026-06-29T00:00:00Z"
+}

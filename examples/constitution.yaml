@@ -1,0 +1,37 @@
+apiVersion: nce/v1
+kind: Constitution
+metadata:
+  id: company-core
+  version: 1.0.0
+  status: published
+  author: governance-team
+  effective_date: 2026-06-29T00:00:00Z
+  scope: global
+resolution:
+  strategy: most-restrictive-wins
+  default_verdict: block
+principles:
+  - id: P-SEC-1
+    category: security
+    statement: "No destructive actions outside test environments."
+rules:
+  - id: R-SEC-1
+    principle: P-SEC-1
+    severity: critical
+    condition:
+      field: action.type
+      op: equals
+      value: db.drop
+    action:
+      type: block
+      message: "Database drops are blocked."
+  - id: R-SAFE-1
+    principle: P-SEC-1
+    severity: informational
+    condition:
+      field: action.type
+      op: equals
+      value: db.read
+    action:
+      type: allow
+      message: "Reads are allowed."

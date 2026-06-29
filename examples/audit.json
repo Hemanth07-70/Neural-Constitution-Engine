@@ -1,0 +1,40 @@
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "api_version": "nce/v1",
+  "request": {
+    "id": "e458872e-336c-48c5-92db-598692debe42",
+    "actor": {
+      "id": "agent-123",
+      "type": "agent"
+    },
+    "action": {
+      "type": "db.drop",
+      "params": {
+        "table": "users"
+      }
+    }
+  },
+  "result": {
+    "action": "block",
+    "risk": {
+      "level": "critical",
+      "factors": [
+        {
+          "rule_id": "R-SEC-1",
+          "category": "security",
+          "severity": "critical"
+        }
+      ]
+    }
+  },
+  "explanation": {
+    "verdict": {
+      "action": "block",
+      "risk_level": "critical"
+    },
+    "determining_rule": {
+      "id": "R-SEC-1",
+      "message": "Database drops are blocked."
+    }
+  }
+}
