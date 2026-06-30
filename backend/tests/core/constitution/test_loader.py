@@ -22,7 +22,7 @@ from backend.core.constitution.loader import ConstitutionLoader
 
 
 class TestConstitutionLoader(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.loader = ConstitutionLoader()
         self.valid_dict = {
             "apiVersion": "nce/v1",
@@ -59,20 +59,20 @@ class TestConstitutionLoader(unittest.TestCase):
             ],
         }
 
-    def test_load_valid_dict(self):
+    def test_load_valid_dict(self) -> None:
         constitution = self.loader.load_dict(self.valid_dict)
         self.assertIsInstance(constitution, Constitution)
         self.assertEqual(constitution.api_version, "nce/v1")
         self.assertEqual(constitution.metadata.id, "org.test.agent")
-        
+
         # Test resolution
-        self.assertIsNotNone(constitution.resolution)
+        assert constitution.resolution is not None
         self.assertEqual(constitution.resolution.strategy, "most-restrictive-wins")
-        
+
         # Test principles
         self.assertEqual(len(constitution.principles), 1)
         self.assertEqual(constitution.principles[0].id, "P-TEST")
-        
+
         # Test rules and order preservation
         self.assertEqual(len(constitution.rules), 2)
         self.assertEqual(constitution.rules[0].id, "R-TEST")
@@ -80,18 +80,18 @@ class TestConstitutionLoader(unittest.TestCase):
         self.assertEqual(constitution.rules[0].action.type, "block")
         self.assertIsInstance(constitution.rules[0].condition, MappingProxyType)
 
-    def test_immutability(self):
+    def test_immutability(self) -> None:
         constitution = self.loader.load_dict(self.valid_dict)
         with self.assertRaises(FrozenInstanceError):
             constitution.api_version = "nce/v2"  # type: ignore
 
         with self.assertRaises(FrozenInstanceError):
             constitution.rules[0].id = "R-MUTATED"  # type: ignore
-            
-        with self.assertRaises(TypeError):
-            constitution.rules[0].condition["new_key"] = "value"
 
-    def test_missing_required_fields(self):
+        with self.assertRaises(TypeError):
+            constitution.rules[0].condition["new_key"] = "value"  # type: ignore
+
+    def test_missing_required_fields(self) -> None:
         invalid_dict = {"apiVersion": "nce/v1"}
         with self.assertRaises(ConstitutionValidationError):
             self.loader.load_dict(invalid_dict)
@@ -101,11 +101,11 @@ class TestConstitutionLoader(unittest.TestCase):
         with self.assertRaises(ConstitutionValidationError):
             self.loader.load_dict(invalid_metadata)
 
-    def test_load_json_file(self):
+    def test_load_json_file(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".json", mode="w", delete=False) as f:
             json.dump(self.valid_dict, f)
             filepath = f.name
-        
+
         try:
             constitution = self.loader.load_file(filepath)
             self.assertEqual(constitution.metadata.id, "org.test.agent")
@@ -113,33 +113,33 @@ class TestConstitutionLoader(unittest.TestCase):
             Path(filepath).unlink()
 
     @unittest.skipIf(yaml is None, "PyYAML not installed")
-    def test_load_yaml_file(self):
+    def test_load_yaml_file(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
             yaml.dump(self.valid_dict, f)
             filepath = f.name
-            
+
         try:
             constitution = self.loader.load_file(filepath)
             self.assertEqual(constitution.metadata.id, "org.test.agent")
         finally:
             Path(filepath).unlink()
 
-    def test_parse_error(self):
+    def test_parse_error(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".json", mode="w", delete=False) as f:
             f.write("{ invalid json")
             filepath = f.name
-            
+
         try:
             with self.assertRaises(ConstitutionParseError):
                 self.loader.load_file(filepath)
         finally:
             Path(filepath).unlink()
 
-    def test_unsupported_extension(self):
+    def test_unsupported_extension(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".txt", mode="w", delete=False) as f:
             f.write("text")
             filepath = f.name
-            
+
         try:
             with self.assertRaises(ConstitutionLoaderError) as cm:
                 self.loader.load_file(filepath)

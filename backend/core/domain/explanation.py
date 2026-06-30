@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from uuid import UUID
 
 from .aliases import Category, PluginRef
-from .enums import RiskLevel, ResolutionStrategy, Scope, VerdictAction
+from .enums import ResolutionStrategy, RiskLevel, Scope, VerdictAction
 from .provenance import Provenance
 
 

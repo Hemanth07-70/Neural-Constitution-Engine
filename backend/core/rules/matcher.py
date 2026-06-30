@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 
 from backend.core.constitution.rule import Rule
+
 from .context import EvaluationContext, MatchResult
 
 

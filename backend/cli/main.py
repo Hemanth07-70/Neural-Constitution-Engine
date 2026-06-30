@@ -5,9 +5,9 @@ import json
 import sys
 from pathlib import Path
 
+from backend.cli.adapters import parse_request
 from backend.core.constitution.loader import ConstitutionLoader
 from backend.core.evaluator.pipeline import EvaluationPipeline
-from backend.cli.adapters import parse_request
 
 
 def handle_validate(args: argparse.Namespace) -> int:
@@ -15,7 +15,7 @@ def handle_validate(args: argparse.Namespace) -> int:
     try:
         loader = ConstitutionLoader()
         constitution = loader.load_file(args.constitution_file)
-        
+
         print("\n=== Constitution Validated ===")
         print(f"ID:      {constitution.metadata.id}")
         print(f"Version: {constitution.metadata.version}")
@@ -37,7 +37,7 @@ def handle_evaluate(args: argparse.Namespace) -> int:
     except Exception as e:
         print(f"Error loading constitution: {e}", file=sys.stderr)
         return 1
-        
+
     try:
         path = Path(args.request_file)
         with path.open("r", encoding="utf-8") as f:
@@ -46,11 +46,11 @@ def handle_evaluate(args: argparse.Namespace) -> int:
     except Exception as e:
         print(f"Error loading request: {e}", file=sys.stderr)
         return 1
-        
+
     try:
         pipeline = EvaluationPipeline()
         result, explanation, audit = pipeline.evaluate(request, constitution)
-        
+
         print("\n=== Evaluation Complete ===")
         print(f"Decision:     {result.action.name}")
         print(f"Winning Rule: {explanation.determining_rule.id}")
@@ -73,7 +73,7 @@ def handle_explain(args: argparse.Namespace) -> int:
         path = Path(args.audit_file)
         with path.open("r", encoding="utf-8") as f:
             audit_data = json.load(f)
-            
+
         print("\n=== Audit Record ===")
         print(json.dumps(audit_data, indent=2))
         print("====================\n")
@@ -90,16 +90,16 @@ def create_parser() -> argparse.ArgumentParser:
     # Validate command
     validate_parser = subparsers.add_parser("validate", help="Load and validate a constitution.")
     validate_parser.add_argument("constitution_file", type=str, help="Path to constitution YAML/JSON")
-    
+
     # Evaluate command
     evaluate_parser = subparsers.add_parser("evaluate", help="Execute the evaluation pipeline.")
     evaluate_parser.add_argument("constitution_file", type=str, help="Path to constitution YAML/JSON")
     evaluate_parser.add_argument("request_file", type=str, help="Path to request JSON")
-    
+
     # Explain command
     explain_parser = subparsers.add_parser("explain", help="Pretty-print an audit record.")
     explain_parser.add_argument("audit_file", type=str, help="Path to audit JSON")
-    
+
     return parser
 
 
@@ -113,7 +113,7 @@ def main() -> int:
         return handle_evaluate(args)
     elif args.command == "explain":
         return handle_explain(args)
-        
+
     return 1
 
 

@@ -1,8 +1,8 @@
 """Metadata representing a specific Execution Plan."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Mapping
 
 
 @dataclass(slots=True, frozen=True)

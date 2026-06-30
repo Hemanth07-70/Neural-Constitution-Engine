@@ -44,87 +44,93 @@ class DummyPlugin(Plugin):
 
 
 class TestPluginSystem(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.manager = PluginManager()
 
-    def test_successful_registration_and_lifecycle(self):
+    def test_successful_registration_and_lifecycle(self) -> None:
         meta = PluginMetadata(id="test.plugin", version="1.0", author="test", capabilities=(Capability.MATCHER,))
         plugin = DummyPlugin(meta)
-        
+
         self.manager.register_plugin(plugin)
         self.assertTrue(plugin.loaded)
         self.assertFalse(plugin.initialized)
-        
+
         self.manager.resolve_and_initialize()
         self.assertTrue(plugin.initialized)
-        
+
         # Verify capability routing
         registry = self.manager.get_registry(Capability.MATCHER)
         self.assertEqual(registry.get("test.plugin"), "provider_for_MATCHER")
-        
+
         self.manager.shutdown_all()
         self.assertTrue(plugin.shutdown_called)
         self.assertTrue(plugin.unloaded)
-        
+
         # Verify unregistration
         with self.assertRaises(PluginRegistrationError):
             registry.get("test.plugin")
 
-    def test_dependency_resolution_order(self):
-        meta_a = PluginMetadata(id="plugin.a", version="1.0", author="test", capabilities=(), dependencies=("plugin.b",))
+    def test_dependency_resolution_order(self) -> None:
+        meta_a = PluginMetadata(
+            id="plugin.a", version="1.0", author="test", capabilities=(), dependencies=("plugin.b",)
+        )
         meta_b = PluginMetadata(id="plugin.b", version="1.0", author="test", capabilities=())
-        
+
         plugin_a = DummyPlugin(meta_a)
         plugin_b = DummyPlugin(meta_b)
-        
+
         # Register out of order
         self.manager.register_plugin(plugin_a)
         self.manager.register_plugin(plugin_b)
-        
+
         # Test private topological sort explicitly for test verification
         order = self.manager._topological_sort()
         self.assertEqual(order, ["plugin.b", "plugin.a"])
-        
+
         self.manager.resolve_and_initialize()
         self.assertTrue(plugin_b.initialized)
         self.assertTrue(plugin_a.initialized)
 
-    def test_cyclic_dependencies(self):
-        meta_a = PluginMetadata(id="plugin.a", version="1.0", author="test", capabilities=(), dependencies=("plugin.b",))
-        meta_b = PluginMetadata(id="plugin.b", version="1.0", author="test", capabilities=(), dependencies=("plugin.a",))
-        
+    def test_cyclic_dependencies(self) -> None:
+        meta_a = PluginMetadata(
+            id="plugin.a", version="1.0", author="test", capabilities=(), dependencies=("plugin.b",)
+        )
+        meta_b = PluginMetadata(
+            id="plugin.b", version="1.0", author="test", capabilities=(), dependencies=("plugin.a",)
+        )
+
         self.manager.register_plugin(DummyPlugin(meta_a))
         self.manager.register_plugin(DummyPlugin(meta_b))
-        
+
         with self.assertRaises(PluginDependencyError):
             self.manager.resolve_and_initialize()
 
-    def test_missing_dependencies(self):
+    def test_missing_dependencies(self) -> None:
         meta_a = PluginMetadata(id="plugin.a", version="1.0", author="test", capabilities=(), dependencies=("missing",))
         self.manager.register_plugin(DummyPlugin(meta_a))
-        
+
         with self.assertRaises(PluginDependencyError):
             self.manager.resolve_and_initialize()
 
-    def test_plugin_load_failure(self):
+    def test_plugin_load_failure(self) -> None:
         meta = PluginMetadata(id="test", version="1", author="test", capabilities=())
         plugin = DummyPlugin(meta, raise_on_load=True)
-        
+
         with self.assertRaises(PluginLifecycleError):
             self.manager.register_plugin(plugin)
 
-    def test_plugin_init_failure(self):
+    def test_plugin_init_failure(self) -> None:
         meta = PluginMetadata(id="test", version="1", author="test", capabilities=())
         plugin = DummyPlugin(meta, raise_on_init=True)
-        
+
         self.manager.register_plugin(plugin)
         with self.assertRaises(PluginLifecycleError):
             self.manager.resolve_and_initialize()
 
-    def test_duplicate_registration(self):
+    def test_duplicate_registration(self) -> None:
         meta = PluginMetadata(id="test", version="1", author="test", capabilities=())
         self.manager.register_plugin(DummyPlugin(meta))
-        
+
         with self.assertRaises(PluginRegistrationError):
             self.manager.register_plugin(DummyPlugin(meta))
 

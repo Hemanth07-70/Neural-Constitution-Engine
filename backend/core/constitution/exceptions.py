@@ -1,5 +1,6 @@
 """Typed exceptions for the Constitution Loader."""
 
+
 class ConstitutionLoaderError(Exception):
     """Base exception for all constitution loader errors."""
 

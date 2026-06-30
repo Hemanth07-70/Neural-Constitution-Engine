@@ -1,7 +1,7 @@
 """An individual node in an execution plan."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Mapping
 
 from backend.core.domain.request import DecisionRequest
 

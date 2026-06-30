@@ -1,5 +1,7 @@
 """The Deterministic Evaluation Pipeline."""
 
+import typing
+
 from backend.core.constitution.constitution import Constitution
 from backend.core.domain.audit import AuditRecord
 from backend.core.domain.explanation import Explanation
@@ -35,21 +37,21 @@ class EvaluationPipeline:
         self,
         request: DecisionRequest,
         constitution: Constitution,
-        registry: getattr(__import__("typing"), "Any") = None
+        registry: "typing.Any" = None,
     ) -> tuple[EvaluationResult, Explanation, AuditRecord]:
         """Execute the pipeline sequentially."""
-        
+
         context = EvaluationContext(request=request, registry=registry)
         data = PipelineData()
 
         try:
             for stage in self.stages:
                 data = stage.execute(request, constitution, context, data)
-                
+
             assert data.result is not None
             assert data.explanation is not None
             assert data.audit is not None
             return data.result, data.explanation, data.audit
-            
+
         except Exception as e:
             raise FailClosedError(f"Pipeline failed closed due to error: {e}") from e

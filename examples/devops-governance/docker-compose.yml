@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  nce-api:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Inject the devops governance constitution
+      - NCE_CONSTITUTION_PATH=/app/examples/devops-governance/constitution.yaml
+    volumes:
+      - ../../examples:/app/examples
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3

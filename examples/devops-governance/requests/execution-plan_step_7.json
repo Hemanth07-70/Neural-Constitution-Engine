@@ -1,0 +1,30 @@
+{
+  "api_version": "nce/v1",
+  "id": "77777777-7777-7777-7777-777777777777",
+  "actor": {
+    "id": "devops-agent-01",
+    "type": "agent",
+    "roles": [],
+    "attributes": {}
+  },
+  "action": {
+    "type": "deploy",
+    "params": {
+      "environment": "production",
+      "critical_vulns": 0,
+      "cab_approved": true,
+      "maintenance_window": "active",
+      "has_rollback_plan": true
+    }
+  },
+  "context": {
+    "constitution_id": "devops-governance",
+    "constitution_version": "1.0.0",
+    "environment": {
+      "name": "production",
+      "timestamp": "2026-06-29T00:00:00Z"
+    },
+    "correlation_id": "00000000-0000-0000-0000-000000000001"
+  },
+  "submitted_at": "2026-06-29T00:00:00Z"
+}

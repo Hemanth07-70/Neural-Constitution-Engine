@@ -1,31 +1,32 @@
-# Frontend — Dashboard (reserved)
+# React + TypeScript + Vite
 
-> **Status: not yet implemented.** This directory is reserved for the NCE dashboard. No
-> Next.js application, dependencies, or business logic exist yet. Implementation begins in
-> **M3** (see [`../docs/roadmap.md`](../docs/roadmap.md)).
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-The frontend will be the human interface to NCE: authoring and versioning constitutions,
-simulating proposals against a draft constitution before publishing, and exploring the audit
-trail. Its design is specified in
-[`../docs/architecture.md`](../docs/architecture.md#recommended-frontend-structure-nextjs--not-yet-implemented).
+Currently, two official plugins are available:
 
-## Planned layout
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
-frontend/
-├── app/                       # Next.js App Router (routes, layouts)
-│   ├── constitutions/         # Authoring and version management
-│   ├── audit/                 # Audit trail explorer
-│   └── layout.tsx
-├── components/                # Reusable presentational components
-├── features/                  # Feature modules (state + UI per domain area)
-├── lib/                       # API client, formatting, utilities
-├── hooks/                     # Reusable React hooks
-├── types/                     # Shared TypeScript types (mirroring the API contract)
-├── public/                    # Static assets
-├── package.json
-└── Dockerfile
-```
 
-When implementation starts, this README will be replaced with setup, run, and build
-instructions.
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

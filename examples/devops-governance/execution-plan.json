@@ -1,0 +1,274 @@
+{
+  "metadata": {
+    "id": "deploy-v2-production",
+    "creator": "devops-agent-01",
+    "created_at": "2026-06-29T00:00:00Z",
+    "goal_description": "Deploy backend v2.0 to production including database migrations.",
+    "extensions": {}
+  },
+  "nodes": [
+    {
+      "id": "step-1-build",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "11111111-1111-1111-1111-111111111111",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "build",
+          "params": {
+            "component": "backend"
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "development",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    },
+    {
+      "id": "step-2-unit-tests",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "22222222-2222-2222-2222-222222222222",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "test",
+          "params": {
+            "suite": "unit"
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "development",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    },
+    {
+      "id": "step-3-security-scan",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "33333333-3333-3333-3333-333333333333",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "scan",
+          "params": {
+            "target": "container-image"
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "development",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    },
+    {
+      "id": "step-4-deploy-staging",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "44444444-4444-4444-4444-444444444444",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "deploy",
+          "params": {
+            "environment": "staging",
+            "critical_vulns": 0
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "staging",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    },
+    {
+      "id": "step-5-smoke-tests",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "55555555-5555-5555-5555-555555555555",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "test",
+          "params": {
+            "suite": "smoke",
+            "environment": "staging"
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "staging",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    },
+    {
+      "id": "step-6-db-migrate-prod",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "66666666-6666-6666-6666-666666666666",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "db.migrate",
+          "params": {
+            "environment": "production",
+            "manual_approval": true
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "production",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    },
+    {
+      "id": "step-7-deploy-production",
+      "request": {
+        "api_version": "nce/v1",
+        "id": "77777777-7777-7777-7777-777777777777",
+        "actor": {
+          "id": "devops-agent-01",
+          "type": "agent",
+          "roles": [],
+          "attributes": {}
+        },
+        "action": {
+          "type": "deploy",
+          "params": {
+            "environment": "production",
+            "critical_vulns": 0,
+            "cab_approved": true,
+            "maintenance_window": "active",
+            "has_rollback_plan": true
+          }
+        },
+        "context": {
+          "constitution_id": "devops-governance",
+          "constitution_version": "1.0.0",
+          "environment": {
+            "name": "production",
+            "timestamp": "2026-06-29T00:00:00Z"
+          },
+          "correlation_id": "00000000-0000-0000-0000-000000000001"
+        },
+        "submitted_at": "2026-06-29T00:00:00Z"
+      },
+      "preconditions": [],
+      "postconditions": [],
+      "extensions": {}
+    }
+  ],
+  "edges": [
+    {
+      "source_id": "step-1-build",
+      "target_id": "step-2-unit-tests",
+      "extensions": {}
+    },
+    {
+      "source_id": "step-2-unit-tests",
+      "target_id": "step-3-security-scan",
+      "extensions": {}
+    },
+    {
+      "source_id": "step-3-security-scan",
+      "target_id": "step-4-deploy-staging",
+      "extensions": {}
+    },
+    {
+      "source_id": "step-4-deploy-staging",
+      "target_id": "step-5-smoke-tests",
+      "extensions": {}
+    },
+    {
+      "source_id": "step-5-smoke-tests",
+      "target_id": "step-6-db-migrate-prod",
+      "extensions": {}
+    },
+    {
+      "source_id": "step-6-db-migrate-prod",
+      "target_id": "step-7-deploy-production",
+      "extensions": {}
+    }
+  ]
+}

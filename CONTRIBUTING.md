@@ -33,8 +33,29 @@ governance tool cannot compromise on.
 
 ## Development workflow
 
-> The commands below describe the *intended* workflow. They will become live as the
-> `backend/` and `frontend/` directories are implemented (see the roadmap).
+The project provides a one-command bootstrap script to set up a virtual environment, install all development dependencies, and configure `pre-commit` hooks.
+
+1. Ensure Python 3.12+ is installed.
+2. Run the bootstrap script:
+   ```bash
+   make install
+   ```
+3. Activate the virtual environment:
+   ```bash
+   source .venv/bin/activate
+   ```
+
+### Workflow Commands
+
+We use a `Makefile` to simplify common development tasks:
+
+- `make format`: Runs `ruff` to auto-format and fix lint errors.
+- `make lint`: Runs `ruff check` and `mypy` for strict type checking.
+- `make test`: Runs `pytest` and enforces 90% test coverage.
+- `make check`: Runs formatting, linting, and tests sequentially.
+- `make clean`: Removes `__pycache__` and other build artifacts.
+
+> **Important**: The CI pipeline requires zero lint errors, zero type errors, and >90% test coverage. Please run `make check` locally before submitting a pull request.
 
 1. **Fork and branch.** Create a topic branch from `main`:
    - `feat/<short-description>` for features

@@ -1,0 +1,211 @@
+........F....................................................
+ERROR: Coverage failure: total of 81 is less than fail-under=90
+                                                                         [100%]
+=================================== FAILURES ===================================
+_____________________ test_evaluate_decision_orchestration _____________________
+
+mock_db = <AsyncMock id='4648293280'>
+mock_engine_manager = <AsyncMock id='4648302160'>
+
+    @pytest.mark.asyncio
+    async def test_evaluate_decision_orchestration(mock_db, mock_engine_manager):
+        service = EvaluationService(mock_db, mock_engine_manager)
+
+>       request_data = DecisionRequestSchema(
+            action={"type": "deploy"},
+            actor={"id": "dev1"}
+        )
+E       pydantic_core._pydantic_core.ValidationError: 4 validation errors for DecisionRequestSchema
+E       id
+E         Field required [type=missing, input_value={'action': {'type': 'depl...'actor': {'id': 'dev1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+E       actor.type
+E         Field required [type=missing, input_value={'id': 'dev1'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+E       context
+E         Field required [type=missing, input_value={'action': {'type': 'depl...'actor': {'id': 'dev1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+E       submitted_at
+E         Field required [type=missing, input_value={'action': {'type': 'depl...'actor': {'id': 'dev1'}}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+backend/tests/application/test_evaluation_service.py:18: ValidationError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/formparsers.py:12
+  /Users/hemanthchowdary/Neural-Constitution-Engine/.venv/lib/python3.12/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
+    import multipart
+
+backend/api/config.py:6
+  /Users/hemanthchowdary/Neural-Constitution-Engine/backend/api/config.py:6: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class APISettings(BaseSettings):
+
+backend/api/schemas/base.py:55
+  /Users/hemanthchowdary/Neural-Constitution-Engine/backend/api/schemas/base.py:55: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class BaseSchema(BaseModel):
+
+.venv/lib/python3.12/site-packages/passlib/utils/__init__.py:854
+  /Users/hemanthchowdary/Neural-Constitution-Engine/.venv/lib/python3.12/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+backend/integrations/providers/config.py:3
+  /Users/hemanthchowdary/Neural-Constitution-Engine/backend/integrations/providers/config.py:3: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ProviderSettings(BaseSettings):
+
+backend/tests/integrations/providers/test_providers.py::test_openai_generate
+backend/tests/integrations/providers/test_providers.py::test_openai_generate_error_retry
+  /Users/hemanthchowdary/Neural-Constitution-Engine/backend/integrations/providers/telemetry.py:36: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.12.7-final-0 _______________
+
+Name                                                          Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------------------------------
+backend/api/__init__.py                                           0      0   100%
+backend/api/adapters.py                                          45      2    96%   104, 188
+backend/api/app.py                                               41      3    93%   29-31
+backend/api/config.py                                            12      0   100%
+backend/api/dependencies.py                                      59     32    46%   20-37, 41-43, 54-69, 85, 94, 100
+backend/api/errors.py                                            11      2    82%   13, 21
+backend/api/middleware.py                                        15      0   100%
+backend/api/routes/__init__.py                                    0      0   100%
+backend/api/routes/api_keys.py                                   65     32    51%   36-40, 49-66, 83-91, 100-114
+backend/api/routes/audits.py                                     16      7    56%   21-39
+backend/api/routes/auth.py                                       60     31    48%   31-46, 56-63, 74-93, 101
+backend/api/routes/evaluate.py                                   12      2    83%   24-25
+backend/api/routes/health.py                                      9      0   100%
+backend/api/routes/langgraph_routes.py                           76     54    29%   29-70, 80-84, 93-96, 106-115, 125-141
+backend/api/routes/plans.py                                      12      2    83%   24-25
+backend/api/routes/providers.py                                  45     21    53%   25, 30-38, 43-53, 61-70
+backend/api/routes/validate.py                                   17      0   100%
+backend/api/schemas/__init__.py                                   0      0   100%
+backend/api/schemas/base.py                                      33      0   100%
+backend/api/schemas/evaluate.py                                  78      0   100%
+backend/api/schemas/plans.py                                     33      0   100%
+backend/application/__init__.py                                   0      0   100%
+backend/application/cache/__init__.py                             0      0   100%
+backend/application/cache/engine_cache.py                        29      4    86%   23-24, 38-39
+backend/application/repositories/__init__.py                      0      0   100%
+backend/application/repositories/audit_repository.py             23     12    48%   14-16, 19-21, 24-31, 34-41
+backend/application/repositories/constitution_repository.py      19      9    53%   14-16, 19-29, 32-38
+backend/application/repositories/organization_repository.py      35     20    43%   11, 14-16, 19-21, 24-26, 31, 34-36, 39-41, 44-49
+backend/application/services/__init__.py                          0      0   100%
+backend/application/services/audit_service.py                    11      3    73%   10, 13, 16
+backend/application/services/constitution_service.py             34     22    35%   13-15, 18, 26-59, 64
+backend/application/services/engine_manager.py                   41      4    90%   49, 56, 75-76
+backend/application/services/evaluation_service.py               31      0   100%
+backend/auth/security.py                                         24     14    42%   12, 15, 18-24, 27-33
+backend/cli/__init__.py                                           0      0   100%
+backend/cli/adapters.py                                          46     15    67%   32-35, 41-42, 48-51, 63, 69-72
+backend/cli/main.py                                              89     12    87%   37-39, 62, 65-67, 81-83, 117, 121
+backend/core/__init__.py                                          0      0   100%
+backend/core/constitution/__init__.py                             6      0   100%
+backend/core/constitution/constitution.py                        12      0   100%
+backend/core/constitution/exceptions.py                           3      0   100%
+backend/core/constitution/loader.py                              85     16    81%   10-11, 33, 45, 59, 80, 86, 90, 95, 97, 108, 113, 115, 119, 132, 136
+backend/core/constitution/metadata.py                            18      0   100%
+backend/core/constitution/rule.py                                28      0   100%
+backend/core/domain/__init__.py                                  13      0   100%
+backend/core/domain/action.py                                    11      0   100%
+backend/core/domain/aliases.py                                    8      0   100%
+backend/core/domain/audit.py                                     24      0   100%
+backend/core/domain/context.py                                   27      0   100%
+backend/core/domain/enums.py                                     36      0   100%
+backend/core/domain/explanation.py                               46      0   100%
+backend/core/domain/principals.py                                30      0   100%
+backend/core/domain/provenance.py                                11      0   100%
+backend/core/domain/request.py                                   21      0   100%
+backend/core/domain/result.py                                    22      0   100%
+backend/core/domain/risk.py                                      19      0   100%
+backend/core/evaluator/__init__.py                                9      0   100%
+backend/core/evaluator/audit_stage.py                            17      0   100%
+backend/core/evaluator/exceptions.py                              6      0   100%
+backend/core/evaluator/explanation_stage.py                      30      4    87%   34-35, 58-59
+backend/core/evaluator/matcher_stage.py                          35     15    57%   27, 31, 33-49
+backend/core/evaluator/pipeline.py                               31      0   100%
+backend/core/evaluator/resolver_stage.py                         40      6    85%   29-30, 54-55, 67-68
+backend/core/evaluator/risk_stage.py                             25      2    92%   41-42
+backend/core/evaluator/stages.py                                 25      1    96%   51
+backend/core/language/__init__.py                                 0      0   100%
+backend/core/language/ast.py                                     42     12    71%   14, 23-29, 38, 47, 58, 68
+backend/core/language/evaluator.py                               90     22    76%   36, 44, 56, 65, 70, 86, 104, 106, 110, 112, 116, 120-122, 126, 130-132, 136, 139-143
+backend/core/language/exceptions.py                              12      4    67%   10-11, 16-17
+backend/core/language/parser.py                                 101      9    91%   18, 38, 44, 47, 75, 103, 105, 110, 133
+backend/core/language/tokens.py                                  76      2    97%   118, 143
+backend/core/planner/__init__.py                                  8      0   100%
+backend/core/planner/edge.py                                      8      0   100%
+backend/core/planner/exceptions.py                                8      0   100%
+backend/core/planner/graph.py                                    34      1    97%   24
+backend/core/planner/metadata.py                                 10      0   100%
+backend/core/planner/node.py                                     12      0   100%
+backend/core/planner/plan.py                                      9      0   100%
+backend/core/planner/validator.py                                33      5    85%   42, 60-63
+backend/core/plugins/__init__.py                                  7      0   100%
+backend/core/plugins/discovery.py                                33     23    30%   20-29, 38-55
+backend/core/plugins/exceptions.py                                5      0   100%
+backend/core/plugins/manager.py                                  71      5    93%   75, 88-89, 102-103
+backend/core/plugins/metadata.py                                 17      0   100%
+backend/core/plugins/plugin.py                                   23      6    74%   16, 21, 26, 31, 36, 48
+backend/core/plugins/registry.py                                 20      3    85%   23, 34, 38
+backend/core/rules/__init__.py                                    7      0   100%
+backend/core/rules/context.py                                    21      0   100%
+backend/core/rules/evaluator.py                                   7      1    86%   33
+backend/core/rules/exceptions.py                                  4      0   100%
+backend/core/rules/interfaces.py                                  7      7     0%   3-10
+backend/core/rules/matcher.py                                     7      1    86%   35
+backend/core/rules/registry.py                                    9      2    78%   24, 39
+backend/core/rules/resolver.py                                    7      1    86%   31
+backend/database/session.py                                      11      0   100%
+backend/integrations/__init__.py                                  0      0   100%
+backend/integrations/langgraph/__init__.py                        0      0   100%
+backend/integrations/langgraph/adapters.py                        8      0   100%
+backend/integrations/langgraph/callbacks.py                      21      4    81%   20, 35, 41, 44
+backend/integrations/langgraph/config.py                         11      0   100%
+backend/integrations/langgraph/exceptions.py                     14      4    71%   16-19
+backend/integrations/langgraph/governed_graph.py                 39      8    79%   51, 56-64, 68, 71, 74, 77, 80
+backend/integrations/langgraph/middleware.py                     83     23    72%   41-45, 55, 75-77, 88-93, 102-103, 112-122
+backend/integrations/langgraph/models.py                         16      0   100%
+backend/integrations/langgraph/state.py                          19      4    79%   7, 9, 14, 16
+backend/integrations/langgraph/telemetry.py                       0      0   100%
+backend/integrations/providers/__init__.py                        9      0   100%
+backend/integrations/providers/anthropic/provider.py             59     45    24%   12-14, 21-55, 65-103, 107, 111, 114, 117
+backend/integrations/providers/base.py                           22      6    73%   11, 16, 21, 26, 31, 36
+backend/integrations/providers/config.py                         14      0   100%
+backend/integrations/providers/exceptions.py                     12      0   100%
+backend/integrations/providers/gemini/provider.py                93     79    15%   12-13, 16-56, 66-110, 113-133, 141-149, 152-163, 166
+backend/integrations/providers/manager.py                        43     10    77%   50-59, 64-67, 71-75
+backend/integrations/providers/models.py                         31      0   100%
+backend/integrations/providers/ollama/provider.py                71     57    20%   12-13, 18-43, 53-85, 88-109, 117-125, 128-139, 142
+backend/integrations/providers/openai/provider.py                62     35    44%   27, 54-82, 85-103, 112-118, 121-130, 134
+backend/integrations/providers/registry.py                       20      2    90%   18-19
+backend/integrations/providers/telemetry.py                      15      0   100%
+backend/models/models.py                                         91      0   100%
+backend/sdk/__init__.py                                           6      0   100%
+backend/sdk/builder.py                                           24      3    88%   22-23, 45
+backend/sdk/config.py                                             6      0   100%
+backend/sdk/engine.py                                            37      2    95%   59-60
+backend/sdk/exceptions.py                                         8      0   100%
+backend/sdk/types.py                                             13      0   100%
+backend/tests/api/__init__.py                                     0      0   100%
+backend/tests/api/test_routes.py                                 72      0   100%
+backend/tests/application/test_engine_manager.py                 38      0   100%
+backend/tests/application/test_evaluation_service.py             34     20    41%   24-57
+backend/tests/cli/test_main.py                                   65      1    98%   103
+backend/tests/core/constitution/test_loader.py                   83      3    96%   12-13, 152
+backend/tests/core/evaluator/test_pipeline.py                    70      1    99%   193
+backend/tests/core/language/test_language.py                     49      0   100%
+backend/tests/core/planner/test_graph.py                         54      1    98%   102
+backend/tests/core/planner/test_validator.py                     44      1    98%   81
+backend/tests/core/plugins/test_plugin_system.py                 92      1    99%   139
+backend/tests/core/rules/test_interfaces.py                      24      2    92%   32, 39
+backend/tests/core/rules/test_registry.py                        31      2    94%   27, 49
+backend/tests/integrations/langgraph/test_governed_graph.py      69      1    99%   20
+backend/tests/integrations/providers/test_providers.py           43      0   100%
+backend/tests/sdk/test_engine.py                                 44      1    98%   104
+-------------------------------------------------------------------------------------------
+TOTAL                                                          4017    767    81%
+FAIL Required test coverage of 90% not reached. Total coverage: 80.91%
+=========================== short test summary info ============================
+FAILED backend/tests/application/test_evaluation_service.py::test_evaluate_decision_orchestration
+1 failed, 60 passed, 7 warnings in 2.22s

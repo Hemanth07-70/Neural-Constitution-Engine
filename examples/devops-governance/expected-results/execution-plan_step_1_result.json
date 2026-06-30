@@ -1,0 +1,5 @@
+{
+  "decision": "allow",
+  "rule": "SYS-FALLBACK",
+  "risk": "informational"
+}

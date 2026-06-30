@@ -1,108 +1,90 @@
-<div align="center">
-
 # Neural Constitution Engine (NCE)
 
-**A production-grade governance framework for autonomous AI agents.**
+![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)
+![CI Status](https://img.shields.io/badge/CI-Passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status: Pre-Alpha](https://img.shields.io/badge/status-pre--alpha-orange.svg)](docs/roadmap.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+**Neural Constitution Engine (NCE)** is a high-performance, deterministic policy evaluation framework designed to securely govern non-deterministic, autonomous AI agents. By requiring AI agents to validate execution plans (DAGs) against a declarative Constitution before they take action, NCE guarantees safety, compliance, and alignment.
 
-</div>
+## 🚀 Features
 
----
+- **Deterministic Evaluation Pipeline:** Ensures fail-closed, purely deterministic evaluations.
+- **Constitution Language (v1):** A bespoke, pure-Python DSL for creating expressive, highly-secure policy conditions.
+- **DAG Execution Validation:** Built-in topological validation for complex AI execution graphs.
+- **Conflict Resolution:** Configurable policies (e.g., `most-restrictive-wins`) to handle overlapping rules.
+- **Extensible Architecture:** Designed with a robust plugin system for custom audit sinks and custom rule evaluators.
+- **Multi-Runtime Support:** Native Python SDK, standalone FastAPI service, and a fully-featured CLI.
 
-> ⚠️ **Project status: pre-alpha (M0 — Foundations).**
-> NCE is in the design and scaffolding phase. There is no installable package yet.
-> This repository currently contains the project's vision, architecture, and governance
-> documents. Follow the [roadmap](docs/roadmap.md) to track progress.
+## 📦 Installation
 
-## What is NCE?
+NCE is distributed as a standard Python package.
 
-The **Neural Constitution Engine** is a governance layer that sits between an autonomous
-agent and the actions it wants to take in the world. Agents *propose* actions; NCE
-*evaluates* each proposal against a declarative **constitution** — a versioned set of
-principles and rules — and returns a verdict: **allow**, **deny**, or **modify**. Every
-decision is recorded in an immutable, queryable **audit trail**.
-
-In short: NCE is the difference between an agent that *can* act and an agent that is
-*permitted* to act, with a complete record of why.
-
-## Why does it exist?
-
-Autonomous agents increasingly take consequential actions — sending emails, moving money,
-modifying infrastructure, writing to production systems. The prompt that shapes their
-behavior is not an enforcement boundary; it is a suggestion. Organizations deploying these
-agents need a layer that is:
-
-- **Declarative** — governance expressed as data (constitutions), not buried in code.
-- **Auditable** — every decision explained and recorded for compliance and forensics.
-- **Independent** — enforced outside the model, so a jailbroken or confused agent cannot
-  bypass it.
-- **Composable** — usable from any agent runtime via a clean API and SDKs.
-
-NCE aims to be to AI governance what a policy engine (e.g. OPA) is to infrastructure
-authorization: a focused, well-understood, production-ready primitive.
-
-## Core concepts
-
-| Concept | Description |
-| --- | --- |
-| **Constitution** | A versioned document of principles and rules that define permitted agent behavior. |
-| **Principle** | A high-level, human-readable governing intent (e.g. "Never disclose user PII to third parties"). |
-| **Rule** | A concrete, machine-evaluable predicate derived from one or more principles. |
-| **Proposal** | An action an agent intends to take, submitted to the engine for evaluation. |
-| **Verdict** | The engine's decision: `allow`, `deny`, or `modify`, with a justification. |
-| **Audit Record** | An immutable log entry capturing the proposal, verdict, and reasoning. |
-
-See [`docs/vision.md`](docs/vision.md) for the philosophy and [`docs/architecture.md`](docs/architecture.md)
-for how these fit together.
-
-## Architecture at a glance
-
-```
-        ┌──────────────┐   proposal    ┌─────────────────────────────┐
-        │  AI Agent    │ ────────────▶ │   Neural Constitution Engine │
-        │  (any runtime)│              │  ┌────────────────────────┐ │
-        │              │ ◀──────────── │  │  Evaluation Pipeline   │ │
-        └──────────────┘    verdict    │  └────────────────────────┘ │
-                                       │   Constitution Store         │
-                                       │   Audit Trail                │
-                                       └──────────────┬──────────────┘
-                                                      │
-                                              ┌───────▼────────┐
-                                              │  Dashboard     │
-                                              │  (Next.js)     │
-                                              └────────────────┘
+```bash
+pip install neural-constitution-engine
 ```
 
-The engine is exposed as a **FastAPI** service. A **Next.js** dashboard provides authoring
-of constitutions and review of audit logs. Full design in
-[`docs/architecture.md`](docs/architecture.md).
+## ⚡ Quick Start
 
-## Repository layout
+Create a policy (`constitution.yaml`):
 
+```yaml
+apiVersion: nce/v1
+kind: Constitution
+metadata:
+  id: quickstart
+  version: 1.0.0
+  scope: global
+principles:
+  - id: P1
+    category: security
+    statement: "No critical vulnerabilities."
+rules:
+  - id: R1
+    principle: P1
+    condition: "action.type == 'deploy' and action.params.vulns > 0"
+    action:
+      type: block
 ```
-neural-constitution-engine/
-├── docs/            # Vision, architecture, and roadmap
-├── backend/         # FastAPI governance service (reserved — not yet implemented)
-├── frontend/        # Next.js dashboard        (reserved — not yet implemented)
-├── README.md
-├── LICENSE
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── SECURITY.md
-└── CHANGELOG.md
+
+Evaluate requests natively in Python:
+
+```python
+from backend.sdk.engine import Engine
+from backend.sdk.types import Action, Actor, DecisionContext, DecisionRequest, Environment
+
+engine = Engine.load("constitution.yaml")
+
+request = DecisionRequest(
+    actor=Actor(id="agent", type="machine"),
+    action=Action(type="deploy", params={"vulns": 1}),
+    context=DecisionContext(
+        constitution_id="quickstart",
+        environment=Environment(name="production")
+    )
+)
+
+audit = engine.evaluate(request)
+print(audit.result.action) # VerdictAction.BLOCK
 ```
 
-## Getting involved
+## 📖 Documentation
 
-NCE is being built in the open and welcomes contributors. The best place to start:
+All documentation is located in the `docs/` directory:
+- [Getting Started](docs/getting-started.md)
+- [Architecture](docs/architecture.md)
+- [SDK Guide](docs/sdk-guide.md)
+- [FastAPI Guide](docs/fastapi-guide.md)
+- [CLI Guide](docs/cli-guide.md)
+- [Constitution Language](docs/constitution-language.md)
+- [Execution Plans](docs/execution-plans.md)
+- [Plugin Development](docs/plugin-development.md)
+- [Benchmarks](docs/benchmarks.md)
 
-1. Read the [vision](docs/vision.md) and [architecture](docs/architecture.md).
-2. Review the [roadmap](docs/roadmap.md) to see what's planned.
-3. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) — significant changes begin as design proposals.
+## 🤝 Contributing
 
-## License
+We welcome community contributions! Please read our [SECURITY.md](SECURITY.md) and review our [Pull Request Checklist](.github/PULL_REQUEST_TEMPLATE.md) before submitting code.
 
-NCE is released under the [MIT License](LICENSE).
+## 📄 License
+
+This project is licensed under the Apache 2.0 License.

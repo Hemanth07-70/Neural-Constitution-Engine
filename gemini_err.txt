@@ -1,0 +1,220 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/hemanthchowdary/Neural-Constitution-Engine
+configfile: pyproject.toml
+plugins: cov-7.1.0, anyio-4.14.1, asyncio-1.4.0, langsmith-0.9.3
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 2 items
+
+backend/tests/integrations/providers/test_gemini_provider.py F.
+ERROR: Coverage failure: total of 6 is less than fail-under=90
+                                                                         [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_gemini_generate_success _________________________
+
+provider = <backend.integrations.providers.gemini.provider.GeminiProvider object at 0x106c27b90>
+
+    @pytest.mark.asyncio
+    async def test_gemini_generate_success(provider):
+        request = ProviderRequest(
+            messages=[ChatMessage(role="user", content="Hello")],
+            model="gemini-1.5-pro"
+        )
+
+        mock_response = AsyncMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "candidates": [{"content": {"parts": [{"text": "Hi there"}]}}],
+            "usageMetadata": {"promptTokenCount": 1, "candidatesTokenCount": 2, "totalTokenCount": 3}
+        }
+
+        with patch("httpx.AsyncClient.post", return_value=mock_response):
+>           response = await provider.generate(request)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend/tests/integrations/providers/test_gemini_provider.py:27:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <backend.integrations.providers.gemini.provider.GeminiProvider object at 0x106c27b90>
+request = ProviderRequest(messages=[ChatMessage(role='user', content='Hello', name=None)], model='gemini-1.5-pro', temperature=0.7, max_tokens=None, stream=False, tools=None, response_format=None, organization_id=None)
+
+    async def generate(self, request: ProviderRequest) -> ProviderResponse:
+        contents = []
+        system_instruction = None
+        for m in request.messages:
+            if m.role == "system":
+                system_instruction = {"parts": [{"text": m.content}]}
+            else:
+                contents.append({
+                    "role": "user" if m.role == "user" else "model",
+                    "parts": [{"text": m.content}]
+                })
+
+        payload = {
+            "contents": contents,
+            "generationConfig": {
+                "temperature": request.temperature,
+            }
+        }
+        if request.max_tokens:
+            payload["generationConfig"]["maxOutputTokens"] = request.max_tokens
+        if system_instruction:
+            payload["systemInstruction"] = system_instruction
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/{request.model}:generateContent?key={self.api_key}",
+                json=payload,
+                timeout=provider_settings.provider_timeout_seconds
+            )
+
+            if response.status_code != 200:
+                raise ProviderAPIError(f"Gemini API Error: {response.text}")
+
+            data = response.json()
+>           candidates = data.get("candidates", [])
+                         ^^^^^^^^
+E           AttributeError: 'coroutine' object has no attribute 'get'
+
+backend/integrations/providers/gemini/provider.py:49: AttributeError
+=============================== warnings summary ===============================
+backend/integrations/providers/config.py:3
+  /Users/hemanthchowdary/Neural-Constitution-Engine/backend/integrations/providers/config.py:3: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ProviderSettings(BaseSettings):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.12.7-final-0 _______________
+
+Name                                                           Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------------------------------
+backend/api/__init__.py                                            0      0   100%
+backend/api/adapters.py                                           45     45     0%   3-207
+backend/api/app.py                                                41     41     0%   3-78
+backend/api/config.py                                             12     12     0%   3-25
+backend/api/dependencies.py                                       59     59     0%   1-100
+backend/api/errors.py                                             11     11     0%   3-30
+backend/api/middleware.py                                         15     15     0%   3-24
+backend/api/routes/__init__.py                                     0      0   100%
+backend/api/routes/api_keys.py                                    65     65     0%   1-114
+backend/api/routes/audits.py                                      16     16     0%   1-39
+backend/api/routes/auth.py                                        60     60     0%   1-101
+backend/api/routes/evaluate.py                                    12     12     0%   3-27
+backend/api/routes/health.py                                       9      9     0%   3-19
+backend/api/routes/langgraph_routes.py                            76     76     0%   1-141
+backend/api/routes/plans.py                                       12     12     0%   3-27
+backend/api/routes/providers.py                                   45     45     0%   1-70
+backend/api/routes/validate.py                                    17     17     0%   3-34
+backend/api/schemas/__init__.py                                    0      0   100%
+backend/api/schemas/base.py                                       33     33     0%   3-60
+backend/api/schemas/evaluate.py                                   78     78     0%   3-110
+backend/api/schemas/plans.py                                      33     33     0%   3-47
+backend/application/__init__.py                                    0      0   100%
+backend/application/cache/__init__.py                              0      0   100%
+backend/application/cache/engine_cache.py                         29     29     0%   1-44
+backend/application/repositories/__init__.py                       0      0   100%
+backend/application/repositories/audit_repository.py              23     23     0%   1-41
+backend/application/repositories/constitution_repository.py       19     19     0%   1-38
+backend/application/repositories/organization_repository.py       35     35     0%   1-49
+backend/application/services/__init__.py                           0      0   100%
+backend/application/services/audit_service.py                     11     11     0%   1-16
+backend/application/services/constitution_service.py              34     34     0%   1-64
+backend/application/services/engine_manager.py                    41     41     0%   1-76
+backend/application/services/evaluation_service.py                31     31     0%   1-72
+backend/cli/__init__.py                                            0      0   100%
+backend/cli/adapters.py                                           46     46     0%   3-76
+backend/cli/main.py                                               89     89     0%   3-121
+backend/core/__init__.py                                           0      0   100%
+backend/core/constitution/__init__.py                              6      6     0%   3-9
+backend/core/constitution/constitution.py                         12     12     0%   3-20
+backend/core/constitution/exceptions.py                            3      3     0%   4-12
+backend/core/constitution/loader.py                               85     85     0%   3-155
+backend/core/constitution/metadata.py                             18     18     0%   3-29
+backend/core/constitution/rule.py                                 28     28     0%   3-43
+backend/core/domain/__init__.py                                   13     13     0%   22-59
+backend/core/domain/action.py                                     11     11     0%   9-48
+backend/core/domain/aliases.py                                     8      8     0%   19-44
+backend/core/domain/audit.py                                      24     24     0%   9-67
+backend/core/domain/context.py                                    27     27     0%   7-82
+backend/core/domain/enums.py                                      36     36     0%   13-111
+backend/core/domain/explanation.py                                46     46     0%   10-140
+backend/core/domain/principals.py                                 30     30     0%   10-117
+backend/core/domain/provenance.py                                 11     11     0%   12-43
+backend/core/domain/request.py                                    21     21     0%   9-67
+backend/core/domain/result.py                                     22     22     0%   7-64
+backend/core/domain/risk.py                                       19     19     0%   8-69
+backend/core/evaluator/__init__.py                                 9      9     0%   3-12
+backend/core/evaluator/audit_stage.py                             17     17     0%   3-47
+backend/core/evaluator/exceptions.py                               6      6     0%   4-19
+backend/core/evaluator/explanation_stage.py                       30     30     0%   3-84
+backend/core/evaluator/matcher_stage.py                           35     35     0%   3-61
+backend/core/evaluator/pipeline.py                                31     31     0%   3-57
+backend/core/evaluator/resolver_stage.py                          40     40     0%   3-80
+backend/core/evaluator/risk_stage.py                              25     25     0%   3-56
+backend/core/evaluator/stages.py                                  25     25     0%   3-51
+backend/core/language/__init__.py                                  0      0   100%
+backend/core/language/ast.py                                      42     42     0%   3-68
+backend/core/language/evaluator.py                                90     90     0%   3-143
+backend/core/language/exceptions.py                               12     12     0%   3-21
+backend/core/language/parser.py                                  101    101     0%   3-133
+backend/core/language/tokens.py                                   76     76     0%   3-150
+backend/core/planner/__init__.py                                   8      8     0%   3-11
+backend/core/planner/edge.py                                       8      8     0%   3-23
+backend/core/planner/exceptions.py                                 8      8     0%   4-25
+backend/core/planner/graph.py                                     34     34     0%   3-59
+backend/core/planner/metadata.py                                  10     10     0%   3-26
+backend/core/planner/node.py                                      12     12     0%   3-31
+backend/core/planner/plan.py                                       9      9     0%   3-22
+backend/core/planner/validator.py                                 33     33     0%   3-65
+backend/core/plugins/__init__.py                                   7      7     0%   3-16
+backend/core/plugins/discovery.py                                 33     33     0%   3-55
+backend/core/plugins/exceptions.py                                 5      5     0%   4-20
+backend/core/plugins/manager.py                                   71     71     0%   3-109
+backend/core/plugins/metadata.py                                  17     17     0%   3-28
+backend/core/plugins/plugin.py                                    23     23     0%   3-48
+backend/core/plugins/registry.py                                  20     20     0%   3-42
+backend/core/rules/__init__.py                                     7      7     0%   3-10
+backend/core/rules/context.py                                     21     21     0%   3-46
+backend/core/rules/evaluator.py                                    7      7     0%   3-33
+backend/core/rules/exceptions.py                                   4      4     0%   4-16
+backend/core/rules/interfaces.py                                   7      7     0%   3-10
+backend/core/rules/matcher.py                                      7      7     0%   3-35
+backend/core/rules/registry.py                                     9      9     0%   3-39
+backend/core/rules/resolver.py                                     7      7     0%   3-31
+backend/integrations/__init__.py                                   0      0   100%
+backend/integrations/langgraph/__init__.py                         0      0   100%
+backend/integrations/langgraph/adapters.py                         8      8     0%   1-14
+backend/integrations/langgraph/callbacks.py                       21     21     0%   1-44
+backend/integrations/langgraph/config.py                          11     11     0%   1-13
+backend/integrations/langgraph/exceptions.py                      14     14     0%   1-19
+backend/integrations/langgraph/governed_graph.py                  39     39     0%   1-86
+backend/integrations/langgraph/middleware.py                      83     83     0%   1-128
+backend/integrations/langgraph/models.py                          16     16     0%   1-25
+backend/integrations/langgraph/state.py                           19     19     0%   1-31
+backend/integrations/langgraph/telemetry.py                        0      0   100%
+backend/integrations/providers/__init__.py                         9      0   100%
+backend/integrations/providers/anthropic/provider.py              59     45    24%   12-14, 21-55, 65-103, 107, 111, 114, 117
+backend/integrations/providers/base.py                            22      6    73%   11, 16, 21, 26, 31, 36
+backend/integrations/providers/config.py                          14      0   100%
+backend/integrations/providers/exceptions.py                      12      0   100%
+backend/integrations/providers/gemini/provider.py                 93     63    32%   20, 34, 36, 50-56, 66-110, 113-133, 141-149, 152-163, 166
+backend/integrations/providers/manager.py                         43     43     0%   1-75
+backend/integrations/providers/models.py                          31      0   100%
+backend/integrations/providers/ollama/provider.py                 71     57    20%   12-13, 18-43, 53-85, 88-109, 117-125, 128-139, 142
+backend/integrations/providers/openai/provider.py                 62     48    23%   12-14, 20-44, 54-82, 85-103, 112-118, 121-130, 134
+backend/integrations/providers/registry.py                        20      6    70%   18-19, 24-26, 31
+backend/integrations/providers/telemetry.py                       15     15     0%   1-43
+backend/sdk/__init__.py                                            6      6     0%   3-26
+backend/sdk/builder.py                                            24     24     0%   3-57
+backend/sdk/config.py                                              6      6     0%   3-17
+backend/sdk/engine.py                                             37     37     0%   3-95
+backend/sdk/exceptions.py                                          8      8     0%   4-25
+backend/sdk/types.py                                              13     13     0%   3-16
+backend/tests/integrations/providers/test_gemini_provider.py      28      3    89%   29-31
+--------------------------------------------------------------------------------------------
+TOTAL                                                           3107   2914     6%
+FAIL Required test coverage of 90% not reached. Total coverage: 6.21%
+=========================== short test summary info ============================
+FAILED backend/tests/integrations/providers/test_gemini_provider.py::test_gemini_generate_success
+==================== 1 failed, 1 passed, 1 warning in 0.50s ====================

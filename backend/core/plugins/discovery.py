@@ -10,7 +10,7 @@ from .plugin import Plugin
 
 class PluginDiscoverer:
     """Discovers plugins in memory without performing raw filesystem traversal.
-    
+
     Supports discovery via explicit module references or Python entry points.
     """
 
@@ -31,7 +31,7 @@ class PluginDiscoverer:
     @staticmethod
     def discover_from_entry_points(group: str = "nce.plugins") -> list[Plugin]:
         """Discover plugins using standard Python entry points.
-        
+
         Args:
             group: The entry point group name.
         """
@@ -40,8 +40,8 @@ class PluginDiscoverer:
             entry_points = importlib.metadata.entry_points(group=group)
         except TypeError:
             # Fallback for older python versions if needed, though we require 3.12
-            entry_points = importlib.metadata.entry_points().get(group, [])
-            
+            entry_points = getattr(importlib.metadata.entry_points(), "get", lambda *args: [])(group, [])  # type: ignore
+
         for ep in entry_points:
             try:
                 plugin_cls = ep.load()
@@ -51,5 +51,5 @@ class PluginDiscoverer:
                     raise PluginDiscoveryError(f"Entry point {ep.name} is not a Plugin subclass.")
             except Exception as e:
                 raise PluginDiscoveryError(f"Failed to load entry point {ep.name}: {e}") from e
-                
+
         return plugins

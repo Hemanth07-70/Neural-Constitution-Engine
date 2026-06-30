@@ -1,6 +1,6 @@
 """Utility for traversing and analyzing an ExecutionPlan graph."""
 
-from typing import Mapping
+from collections.abc import Mapping
 
 from .edge import PlanEdge
 from .exceptions import CycleDetectedError, PlanGraphError
@@ -14,7 +14,7 @@ class PlanGraph:
     def __init__(self, plan: ExecutionPlan) -> None:
         self.plan = plan
         self.node_map: Mapping[str, PlanNode] = {node.id: node for node in plan.nodes}
-        
+
         # Build adjacency lists
         self.adj: dict[str, list[PlanEdge]] = {node.id: [] for node in plan.nodes}
         self.in_degree: dict[str, int] = {node.id: 0 for node in plan.nodes}
@@ -24,16 +24,16 @@ class PlanGraph:
                 raise PlanGraphError(f"Edge references unknown source node: {edge.source_id}")
             if edge.target_id not in self.node_map:
                 raise PlanGraphError(f"Edge references unknown target node: {edge.target_id}")
-            
+
             self.adj[edge.source_id].append(edge)
             self.in_degree[edge.target_id] += 1
 
     def topological_sort(self) -> tuple[PlanNode, ...]:
         """Perform Kahn's Algorithm to sort nodes topologically and detect cycles.
-        
+
         Returns:
             A tuple of PlanNode in a valid execution order.
-            
+
         Raises:
             CycleDetectedError: If the graph is not a DAG.
         """

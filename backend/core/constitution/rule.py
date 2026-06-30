@@ -30,7 +30,7 @@ class Rule:
     """A declarative condition over a proposal and its resulting action."""
 
     id: str
-    condition: Mapping[str, object]
+    condition: str | Mapping[str, object]
     action: RuleAction
     title: str | None = None
     description: str | None = None

@@ -1,0 +1,27 @@
+{
+  "api_version": "nce/v1",
+  "id": "66666666-6666-6666-6666-666666666666",
+  "actor": {
+    "id": "devops-agent-01",
+    "type": "agent",
+    "roles": [],
+    "attributes": {}
+  },
+  "action": {
+    "type": "db.migrate",
+    "params": {
+      "environment": "production",
+      "manual_approval": true
+    }
+  },
+  "context": {
+    "constitution_id": "devops-governance",
+    "constitution_version": "1.0.0",
+    "environment": {
+      "name": "production",
+      "timestamp": "2026-06-29T00:00:00Z"
+    },
+    "correlation_id": "00000000-0000-0000-0000-000000000001"
+  },
+  "submitted_at": "2026-06-29T00:00:00Z"
+}

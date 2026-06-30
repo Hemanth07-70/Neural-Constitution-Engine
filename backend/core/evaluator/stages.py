@@ -16,9 +16,10 @@ from backend.core.rules.context import EvaluationContext, MatchResult, ResolvedV
 @dataclass(slots=True, frozen=True)
 class PipelineData:
     """Immutable data passed and enriched across pipeline stages.
-    
+
     Each stage creates a new copy with its specific output populated.
     """
+
     matches: tuple[MatchResult, ...] = field(default_factory=tuple)
     risk: RiskAssessment | None = None
     verdict: ResolvedVerdict | None = None
@@ -28,12 +29,13 @@ class PipelineData:
 
     def replace(self, **changes: Any) -> "PipelineData":
         import dataclasses
+
         return dataclasses.replace(self, **changes)
 
 
 class PipelineStage(ABC):
     """Base interface for a stage in the evaluation pipeline.
-    
+
     Stages must be deterministic, pure, and not mutate shared state.
     """
 

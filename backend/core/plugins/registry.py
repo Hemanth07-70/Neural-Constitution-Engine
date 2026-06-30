@@ -1,15 +1,15 @@
 """Isolated registries for plugin capabilities."""
 
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 from .exceptions import PluginRegistrationError
 
 T = TypeVar("T")
 
 
-class CapabilityRegistry(Generic[T]):
+class CapabilityRegistry[T]:
     """An isolated registry for a specific capability type.
-    
+
     Registries have no knowledge of each other or the broader PluginManager.
     They simply map a plugin ID to a provider implementation.
     """
@@ -32,7 +32,7 @@ class CapabilityRegistry(Generic[T]):
     def list_providers(self) -> list[T]:
         """Return all registered providers in this registry."""
         return list(self._providers.values())
-        
+
     def list_keys(self) -> list[str]:
         """Return all registered plugin IDs."""
         return list(self._providers.keys())

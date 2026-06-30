@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: nce_user
+      POSTGRES_PASSWORD: nce_password
+      POSTGRES_DB: nce_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - nce_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nce_user -d nce_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  nce_postgres_data:

@@ -1,0 +1,61 @@
+apiVersion: nce/v1
+kind: Constitution
+metadata:
+  id: "langgraph-demo"
+  version: "1.0.0"
+  scope: "global"
+  title: "AI Coding Agent Constitution"
+resolution:
+  strategy: "strict"
+  default_verdict: "allow"
+principles:
+  - id: "p-deploy"
+    statement: "Deployments must be strictly controlled and secure."
+    category: "security"
+  - id: "p-test"
+    statement: "Code cannot be deployed if tests fail."
+    category: "quality"
+
+rules:
+  - id: "rule-deploy-approval"
+    condition: "action.type == 'Deploy' and not context.get('approved', False)"
+    action:
+      type: "requires_approval"
+      message: "Production deployment requires manual approval."
+      approver_role: "admin"
+    severity: "high"
+    principle: "p-deploy"
+
+  - id: "rule-block-tests-failed"
+    condition: "action.type == 'Deploy' and resource.attributes.get('tests_passed') == False"
+    action:
+      type: "block"
+      message: "Cannot deploy because tests have failed."
+    severity: "critical"
+    principle: "p-test"
+
+  - id: "rule-block-critical-vulns"
+    condition: "action.type == 'Deploy' and resource.attributes.get('critical_vulns', 0) > 0"
+    action:
+      type: "block"
+      message: "Cannot deploy with critical vulnerabilities."
+    severity: "critical"
+    principle: "p-deploy"
+
+  - id: "rule-enforce-rollback"
+    condition: "action.type == 'Deploy' and not resource.attributes.get('rollback_plan')"
+    action:
+      type: "rewrite"
+      message: "Injecting default rollback plan."
+      transform:
+        "rollback_plan": "default_auto_rollback_script.sh"
+    severity: "medium"
+    principle: "p-deploy"
+
+  - id: "rule-log-all"
+    condition: "action.type in ['ReadRepository', 'GeneratePatch', 'RunTests', 'SecurityScan']"
+    action:
+      type: "log_only"
+      message: "Logging agent activity."
+    severity: "low"
+    principle: "p-deploy"

@@ -1,0 +1,26 @@
+{
+  "api_version": "nce/v1",
+  "id": "33333333-3333-3333-3333-333333333333",
+  "actor": {
+    "id": "devops-agent-01",
+    "type": "agent",
+    "roles": [],
+    "attributes": {}
+  },
+  "action": {
+    "type": "scan",
+    "params": {
+      "target": "container-image"
+    }
+  },
+  "context": {
+    "constitution_id": "devops-governance",
+    "constitution_version": "1.0.0",
+    "environment": {
+      "name": "development",
+      "timestamp": "2026-06-29T00:00:00Z"
+    },
+    "correlation_id": "00000000-0000-0000-0000-000000000001"
+  },
+  "submitted_at": "2026-06-29T00:00:00Z"
+}

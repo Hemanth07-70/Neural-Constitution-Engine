@@ -1,0 +1,5 @@
+* @platform-engineering
+/backend/core/ @platform-engineering
+/backend/sdk/ @platform-engineering
+/backend/api/ @api-team
+/docs/ @devrel

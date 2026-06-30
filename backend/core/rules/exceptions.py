@@ -1,5 +1,6 @@
 """Exceptions for the Rule Engine."""
 
+
 class RuleEngineError(Exception):
     """Base class for all rule engine exceptions."""
 

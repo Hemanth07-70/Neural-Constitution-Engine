@@ -8,6 +8,7 @@ from enum import Enum, auto
 
 class Capability(Enum):
     """Core capabilities a plugin can provide."""
+
     MATCHER = auto()
     EVALUATOR = auto()
     RESOLVER = auto()
@@ -18,6 +19,7 @@ class Capability(Enum):
 @dataclass(slots=True, frozen=True)
 class PluginMetadata:
     """Metadata describing a plugin."""
+
     id: str
     version: str
     author: str

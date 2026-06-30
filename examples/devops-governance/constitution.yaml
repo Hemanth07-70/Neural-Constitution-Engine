@@ -1,0 +1,59 @@
+apiVersion: nce/v1
+kind: Constitution
+metadata:
+  id: devops-governance
+  version: 1.0.0
+  status: published
+  author: platform-engineering
+  effective_date: 2026-06-29T00:00:00Z
+  scope: global
+resolution:
+  strategy: most-restrictive-wins
+  default_verdict: allow
+principles:
+  - id: P-SEC-1
+    category: security
+    statement: "No software may be deployed with known critical security vulnerabilities."
+  - id: P-PROC-1
+    category: process
+    statement: "Production changes must undergo strict approval and follow maintenance schedules."
+rules:
+  - id: R-CAB-APPROVAL
+    principle: P-PROC-1
+    severity: critical
+    condition: "action.type == 'deploy' and action.params.environment == 'production' and action.params.cab_approved != true"
+    action:
+      type: block
+      message: "Deployments to production require CAB approval."
+
+  - id: R-MAINTENANCE-WINDOW
+    principle: P-PROC-1
+    severity: high
+    condition: "action.type == 'deploy' and action.params.environment == 'production' and action.params.maintenance_window != 'active'"
+    action:
+      type: block
+      message: "Production deployments can only occur during active maintenance windows."
+
+  - id: R-ROLLBACK-PLAN
+    principle: P-PROC-1
+    severity: high
+    condition: "action.type == 'deploy' and action.params.environment == 'production' and action.params.has_rollback_plan != true"
+    action:
+      type: block
+      message: "A rollback plan is mandatory for production deployments."
+
+  - id: R-SEC-CRITICAL-BLOCK
+    principle: P-SEC-1
+    severity: critical
+    condition: "action.type == 'deploy' and action.params.critical_vulns > 0"
+    action:
+      type: block
+      message: "Deployment blocked: critical security vulnerabilities present."
+
+  - id: R-DB-MIGRATE-APPROVAL
+    principle: P-PROC-1
+    severity: critical
+    condition: "action.type == 'db.migrate' and action.params.environment == 'production' and action.params.manual_approval != true"
+    action:
+      type: block
+      message: "Production database migrations require manual approval."

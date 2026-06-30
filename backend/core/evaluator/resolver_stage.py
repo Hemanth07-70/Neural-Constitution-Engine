@@ -1,11 +1,13 @@
 """Stage 3: Resolves rule conflicts."""
 
+from typing import Any
+
 from backend.core.constitution.constitution import Constitution
-from backend.core.domain.enums import VerdictAction
+from backend.core.domain.enums import Scope, VerdictAction
+from backend.core.domain.explanation import OverriddenContender
 from backend.core.domain.request import DecisionRequest
 from backend.core.rules.context import EvaluationContext, ResolvedVerdict
-from backend.core.domain.explanation import OverriddenContender
-from backend.core.domain.enums import Scope
+
 from .stages import PipelineData, PipelineStage
 
 
@@ -27,10 +29,11 @@ class ResolverStage(PipelineStage):
                 except ValueError:
                     pass
             from backend.core.constitution.rule import Rule, RuleAction
+
             fallback_rule = Rule(
                 id="SYS-FALLBACK",
                 condition={},
-                action=RuleAction(type=default_action.value, message="No rules matched.")
+                action=RuleAction(type=default_action.value, message="No rules matched."),
             )
             verdict = ResolvedVerdict(winning_rule=fallback_rule)
             return data.replace(verdict=verdict)
@@ -44,21 +47,18 @@ class ResolverStage(PipelineStage):
             VerdictAction.ALLOW: 0,
         }
 
-        def sort_key(match):
+        def sort_key(match: Any) -> Any:
             action_str = match.rule.action.type.lower() if match.rule.action else "allow"
             try:
                 action_enum = VerdictAction(action_str)
             except ValueError:
                 action_enum = VerdictAction.BLOCK
-                
-            return (
-                action_order.get(action_enum, 5),
-                match.rule.id
-            )
+
+            return (action_order.get(action_enum, 5), match.rule.id)
 
         sorted_matches = sorted(data.matches, key=sort_key, reverse=True)
         winner = sorted_matches[0]
-        
+
         contenders = []
         for match in sorted_matches[1:]:
             action_str = match.rule.action.type.lower() if match.rule.action else "allow"
@@ -66,16 +66,15 @@ class ResolverStage(PipelineStage):
                 action_enum = VerdictAction(action_str)
             except ValueError:
                 action_enum = VerdictAction.BLOCK
-            
-            contenders.append(OverriddenContender(
-                id=match.rule.id,
-                scope=Scope.PROJECT, # Default simulation
-                action=action_enum,
-                reason="lower authority"
-            ))
-            
-        verdict = ResolvedVerdict(
-            winning_rule=winner.rule,
-            overridden_contenders=tuple(contenders)
-        )
+
+            contenders.append(
+                OverriddenContender(
+                    id=match.rule.id,
+                    scope=Scope.PROJECT,  # Default simulation
+                    action=action_enum,
+                    reason="lower authority",
+                )
+            )
+
+        verdict = ResolvedVerdict(winning_rule=winner.rule, overridden_contenders=tuple(contenders))
         return data.replace(verdict=verdict)

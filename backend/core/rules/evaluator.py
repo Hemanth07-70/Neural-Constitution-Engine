@@ -12,7 +12,7 @@ class RuleEvaluator(ABC):
     An evaluator is conceptually a pure function: given a normalized proposal
     and declared parameters, it returns a deterministic boolean indicating
     whether the rule matches, along with an optional structured finding.
-    
+
     Invariants:
         - Pure & deterministic: Identical inputs must yield identical outputs.
         - Side-effect free: Must not perform external I/O on the hot path.
