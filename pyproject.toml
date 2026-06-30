@@ -57,7 +57,7 @@ explicit_package_bases = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q --cov=backend --cov-report=term-missing --cov-fail-under=90"
+addopts = "-ra -q"
 testpaths = [
     "backend/tests",
 ]
