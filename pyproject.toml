@@ -14,7 +14,7 @@ authors = [
 ]
 dependencies = [
     "pyyaml>=6.0.1",
-    "fastapi>=0.111.0,<0.112.0",
+    "fastapi>=0.111.0,<0.139.0",
     "uvicorn>=0.30.1",
     "pydantic>=2.7.4",
     "pydantic-settings>=2.3.4",
