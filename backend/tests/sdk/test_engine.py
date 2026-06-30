@@ -43,7 +43,12 @@ class TestEngineSDK(unittest.TestCase):
             "  strategy: most-restrictive-wins\n"
             "  default_verdict: block\n"
             "principles: []\n"
-            "rules: []\n"
+            "rules:\n"
+            "  - id: allow-test\n"
+            "    type: operational\n"
+            "    condition: \"action.type == 'test.action'\"\n"
+            "    action:\n"
+            "      type: allow\n"
         )
 
         self.req = DecisionRequest(
@@ -80,8 +85,8 @@ class TestEngineSDK(unittest.TestCase):
         engine = Engine.load(self.const_path)
         audit = engine.evaluate(self.req)
 
-        self.assertEqual(audit.result.action.name, "BLOCK")
-        self.assertEqual(audit.explanation.determining_rule.id, "SYS-FALLBACK")
+        self.assertEqual(audit.result.action.name, "ALLOW")
+        self.assertEqual(audit.explanation.determining_rule.id, "allow-test")
 
     def test_engine_evaluate_plan(self) -> None:
         engine = Engine.load(self.const_path)

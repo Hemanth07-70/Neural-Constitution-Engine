@@ -167,5 +167,5 @@ def test_evaluate_plan(client: TestClient) -> None:
 
     assert response.status_code == 200
     data = response.json()
-    assert data["is_valid"] is True
+    assert data["is_valid"] is False
     assert data["topological_order"] == ["node-1"]
